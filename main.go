@@ -51,7 +51,7 @@ func main() {
 			tui.RunTUI(crawler.results, finished_in)
 		},
 	}
-	rootCmd.Flags().StringVarP(&startURL, "url", "u", "", "Staring URL(*)")
+	rootCmd.Flags().StringVarP(&startURL, "url", "u", "", "Starting URL(*)")
 	rootCmd.Flags().IntVarP(&maxDepth, "depth", "d", 5, "Maximum crawl depth")
 	rootCmd.Flags().IntVarP(&workers, "workers", "w", 10, "Number of concurrent workers")
 	rootCmd.MarkFlagRequired("url")
