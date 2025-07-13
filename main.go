@@ -1,10 +1,10 @@
 package main
 
 import (
-	"crowl4dead/crawler"
-	"crowl4dead/models"
-	"crowl4dead/tui"
-	"crowl4dead/validator"
+	"crawl4dead/crawler"
+	"crawl4dead/models"
+	"crawl4dead/tui"
+	"crawl4dead/validator"
 	"fmt"
 	"net/url"
 	"os"
@@ -29,7 +29,7 @@ func main() {
 	var workers int
 
 	rootCmd := &cobra.Command{
-		Use:   "crowl4dead [flags]",
+		Use:   "crawl4dead [flags]",
 		Short: "Finds dead links, outbound links and some filters",
 		Run: func(cmd *cobra.Command, args []string) {
 			u, err := url.Parse(startURL)

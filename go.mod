@@ -1,4 +1,4 @@
-module crowl4dead
+module crawl4dead
 
 go 1.23.0
 

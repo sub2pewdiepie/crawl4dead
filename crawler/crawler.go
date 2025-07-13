@@ -1,7 +1,7 @@
 package crawler
 
 import (
-	"crowl4dead/models"
+	"crawl4dead/models"
 	"net/http"
 	"net/url"
 

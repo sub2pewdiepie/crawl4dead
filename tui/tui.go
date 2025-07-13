@@ -1,7 +1,7 @@
 package tui
 
 import (
-	"crowl4dead/models"
+	"crawl4dead/models"
 	"fmt"
 	"os"
 	"time"
