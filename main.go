@@ -15,10 +15,10 @@ import (
 )
 
 type Crawler struct {
-	visited    map[string]bool
-	results    []models.Result
-	mu         sync.Mutex
 	baseDomain string
+	results    []models.Result
+	visited    map[string]bool
+	mu         sync.Mutex
 	maxDepth   int
 	workers    int
 }

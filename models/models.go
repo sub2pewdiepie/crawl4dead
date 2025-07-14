@@ -9,6 +9,6 @@ type Link struct {
 
 type Result struct {
 	Link       Link
-	StatusCode int32
 	Status     string
+	StatusCode int32
 }
