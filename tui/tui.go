@@ -27,6 +27,9 @@ func RunTUI(results []models.Result, timer time.Duration) {
 					Options(
 						huh.NewOption("All Links", "all"),
 						huh.NewOption("Alive Links", "alive"),
+						huh.NewOption("Redirect", "redirect"),
+						huh.NewOption("Forbiden", "forbiden"),
+						huh.NewOption("Server error", "server-error"),
 						huh.NewOption("Dead Links", "dead"),
 						huh.NewOption("Outbound Links", "outbound"),
 						huh.NewOption("Exit", "exit"),

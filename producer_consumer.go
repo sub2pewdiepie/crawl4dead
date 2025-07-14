@@ -22,6 +22,7 @@ type ProducerConsumer struct {
 	resultChan  chan models.Result
 	visited     map[string]bool
 	sem         chan struct{}
+	semProds    chan struct{}
 }
 
 func NewProducerConsumer(baseDomain string, workers, maxDepth int) *ProducerConsumer {
@@ -30,9 +31,10 @@ func NewProducerConsumer(baseDomain string, workers, maxDepth int) *ProducerCons
 		workers:    workers,
 		maxDepth:   maxDepth,
 		baseDomain: baseDomain,
-		taskChan:   make(chan models.Link, 100),
-		resultChan: make(chan models.Result, 100),
+		taskChan:   make(chan models.Link, 150),
+		resultChan: make(chan models.Result, 150),
 		sem:        make(chan struct{}, workers),
+		semProds:   make(chan struct{}, workers),
 		visited:    make(map[string]bool),
 	}
 }
@@ -64,7 +66,7 @@ func (pc *ProducerConsumer) Crawl(startURL string) {
 
 func (pc *ProducerConsumer) producer(url string, depth int) {
 	defer pc.wgProducers.Done()
-
+	pc.semProds <- struct{}{}
 	//visited URLs
 	pc.visitedMu.Lock()
 	if pc.visited[url] {
@@ -101,6 +103,7 @@ func (pc *ProducerConsumer) producer(url string, depth int) {
 		}
 	}
 	//crawl for new URLs
+	<-pc.semProds
 	for _, link := range links {
 		if link.Depth <= pc.maxDepth && !crawler.IsExternal(link.URL, pc.baseDomain) {
 			normalizedLinkURL, err := normalizeURL(link.URL)
