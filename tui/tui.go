@@ -51,7 +51,7 @@ func RunTUI(results []models.Result, timer time.Duration) {
 		for _, res := range results {
 			if filter == "all" || res.Status == filter {
 				count++
-				fmt.Printf("URL:    %s\nStatus: %s\nSource: %s\n\n", truncate(res.Link.URL, 60), res.Status, truncate(res.Link.Source, 60))
+				fmt.Printf("URL:    %s\nStatus: %s\nSource: %s\nHTTP-code: %v\n\n", truncate(res.Link.URL, 60), res.Status, truncate(res.Link.Source, 60), res.StatusCode)
 			}
 		}
 		fmt.Printf("Total: %d results\n", count)

@@ -38,17 +38,20 @@ func main() {
 				os.Exit(1)
 			}
 
-			crawler := &Crawler{
-				visited:    make(map[string]bool),
-				results:    []models.Result{},
-				baseDomain: u.Host,
-				maxDepth:   maxDepth,
-				workers:    workers,
-			}
+			// crawler := &Crawler{
+			// 	visited:    make(map[string]bool),
+			// 	results:    []models.Result{},
+			// 	baseDomain: u.Host,
+			// 	maxDepth:   maxDepth,
+			// 	workers:    workers,
+			// }
+			pc := NewProducerConsumer(u.Host, workers, maxDepth)
 			start := time.Now()
-			crawler.Crawl(startURL, 0)
+			// crawler.Crawl(startURL, 0)
+			pc.Crawl(startURL)
 			finished_in := time.Since(start)
-			tui.RunTUI(crawler.results, finished_in)
+			// tui.RunTUI(crawler.results, finished_in)
+			tui.RunTUI(pc.results, finished_in)
 		},
 	}
 	rootCmd.Flags().StringVarP(&startURL, "url", "u", "", "Starting URL(*)")
@@ -71,7 +74,7 @@ func (c *Crawler) Crawl(urlStr string, depth int) {
 	}
 	c.visited[urlStr] = true
 	c.mu.Unlock()
-	links, err := crawler.FetchLinks(urlStr)
+	links, err := crawler.OldFetchLinks(urlStr)
 	if err != nil {
 		c.mu.Lock()
 		c.results = append(c.results, models.Result{Link: models.Link{URL: urlStr, Source: "initial"}, Status: "dead"})
@@ -101,8 +104,8 @@ func (c *Crawler) Crawl(urlStr string, depth int) {
 			defer wg.Done()
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
-			status := validator.ValidateLink(link.URL)
-			resultChan <- models.Result{Link: link, Status: status}
+			status, statusCode := validator.ValidateLink(link.URL)
+			resultChan <- models.Result{Link: link, Status: status, StatusCode: statusCode}
 			if status == "alive" && !c.visited[link.URL] {
 				c.Crawl(link.URL, depth+1)
 			}

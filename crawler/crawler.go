@@ -8,7 +8,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-func FetchLinks(urlStr string) ([]models.Link, error) {
+func OldFetchLinks(urlStr string) ([]models.Link, error) {
 	resp, err := http.Get(urlStr)
 	if err != nil {
 		return nil, err
@@ -25,7 +25,44 @@ func FetchLinks(urlStr string) ([]models.Link, error) {
 			for _, a := range n.Attr {
 				if a.Key == "href" {
 					absURL := resolveURL(urlStr, a.Val)
-					links = append(links, models.Link{URL: absURL, Source: urlStr})
+					links = append(links, models.Link{
+						URL:    absURL,
+						Source: urlStr,
+					})
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+	return links, nil
+}
+func FetchLinks(urlStr string, depth int) ([]models.Link, error) {
+
+	resp, err := http.Get(urlStr)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	doc, err := html.Parse(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var links []models.Link
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "a" {
+			for _, a := range n.Attr {
+				if a.Key == "href" {
+					absURL := resolveURL(urlStr, a.Val)
+					links = append(links, models.Link{
+						URL:    absURL,
+						Source: urlStr,
+						Depth:  depth + 1,
+						// IsExternal: IsExternal(absURL, baseDomain),
+					})
 				}
 			}
 		}
